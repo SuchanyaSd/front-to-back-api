@@ -94,9 +94,22 @@ exports.login = async (req, res, next) => {
 };
 
 exports.currentUser = async (req, res, next) => {
-    try {
-        res.json({message : "Hello, current user"})
-    } catch (err) {
-        next(err)
-    }
-}
+  try {
+    const { email } = req.user;
+    const profile = await prisma.profile.findFirst({
+      where: {
+        email: email,
+      },
+      select: {
+        id: true,
+        email: true,
+        role: true,
+      },
+    });
+    console.log(profile);
+
+    res.json({ result: profile });
+  } catch (err) {
+    next(err);
+  }
+};
